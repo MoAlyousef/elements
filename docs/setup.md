@@ -309,6 +309,27 @@ alongside the "hello_universe" example directory you copied to:
 3. CD to the build directory.
 4. cmake -GXcode -DELEMENTS_ROOT="../elements" ../
 
+Alternatively, with newer versions of CMake (> 3.14), you can use CMake's fetchContent functionality to fetch the Elements project during configuration time. A minimal CMakeLists.txt would look like:
+```cmake
+cmake_minimum_required(VERSION 3.15)
+project(elements_example)
+
+set(ELEMENTS_BUILD_EXAMPLES OFF CACHE BOOL " " FORCE) # To avoid building the examples directory
+
+include(FetchContent)
+FetchContent_Declare(elements GIT_REPOSITORY https://github.com/cycfi/elements GIT_SHALLOW ON)
+FetchContent_MakeAvailable(elements)
+
+set(ELEMENTS_ROOT ${elements_SOURCE_DIR})
+set (CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${ELEMENTS_ROOT}/cmake")
+
+set(ELEMENTS_APP_PROJECT "app") # Check the examples for more ELEMENTS_APP_* properties
+
+set(ELEMENTS_APP_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/resources/image.jpg) # Add resources accessible to your app
+
+include(ElementsConfigApp)
+```
+
 [apt-get]:                https://linux.die.net/man/8/apt-get
 [Cairo]:                  https://cairographics.org/
 [Clang]:                  https://clang.llvm.org/
